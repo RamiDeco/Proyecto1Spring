@@ -11,17 +11,18 @@ import org.springframework.web.bind.annotation.*;
 
 //Esta capa transforma de JSON a JAVA para ser manipulado por el servicio
 @RestController
+@CrossOrigin(origins = "*")
 //punto de entrada a la api
 @RequestMapping("/personas")
 public class PersonaController {
- //  @Autowired
-//PersonaServices servicio;
+    @Autowired
+    private PersonaServices personaService;
 
     @GetMapping("")
     public ResponseEntity<?> getAll(){
         try{
             return ResponseEntity.status(HttpStatus.OK).
-                    body("Busqué todos los datos");
+                    body(personaService.findAll());
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error, por favor intente más tarde\"}");
@@ -34,7 +35,7 @@ public class PersonaController {
     //@PathVariable toma lo que le pedimos de la url
     public ResponseEntity<?> getOne(@PathVariable Long id){
         try{
-            return ResponseEntity.status(HttpStatus.OK).body("Busqué esta persona por Id:" + id);
+            return ResponseEntity.status(HttpStatus.OK).body(personaService.findById(id));
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Error, por favor intente más tarde\"}");
@@ -52,7 +53,7 @@ public class PersonaController {
 
 
         try{
-            return ResponseEntity.status(HttpStatus.OK).body("Grabé los datos anteriores");
+            return ResponseEntity.status(HttpStatus.OK).body(personaService.save(entity));
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Error, por favor intente más tarde\"}");
@@ -68,7 +69,7 @@ public class PersonaController {
         System.out.println("Nombre :" + entity.getNombre());
         System.out.println("Apellido :" + entity.getApellido());
         try{
-            return ResponseEntity.status(HttpStatus.OK).body("Actualicé los datos anteriores");
+            return ResponseEntity.status(HttpStatus.OK).body(personaService.update(id,entity));
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Error, por favor intente más tarde\"}");
@@ -78,7 +79,7 @@ public class PersonaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         try{
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminé el registro" + id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(personaService.delete(id));
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Error, por favor intente más tarde\"}");
